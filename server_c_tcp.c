@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
         }
         buffer[bytes_received] = '\0';
         buffer[strcspn(buffer, "\r\n")] = '\0';
-        char* cannot_compute = "Sorry, cannot compute!\n";
+        char* cannot_compute = "Fron server: Sorry, cannot compute!\n";
         if (!is_all_numbers(buffer)) {
             send(client_fd, cannot_compute, strlen(cannot_compute), 0);
         }
@@ -89,7 +89,6 @@ int main(int argc, char *argv[]) {
                 sprintf(buffer, "%d", sum);
                 char send_msg[128];
                 sprintf(send_msg, "From server: %d\n", sum);
-                printf("Sent %d", sum);
                 send(client_fd, send_msg, strlen(send_msg), 0);
             } while (sum >= 10);
         }

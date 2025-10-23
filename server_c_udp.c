@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
         buffer[bytes_received] = '\0';
         buffer[strcspn(buffer, "\r\n")] = '\0';
 
-        char* cannot_compute = "Sorry, cannot compute!\n";
+        char* cannot_compute = "From server: Sorry, cannot compute!\n";
         if (!is_all_numbers(buffer)) {
             sendto(server_fd, cannot_compute, strlen(cannot_compute), 0, (struct sockaddr *)&client_addr, client_len);
         }
