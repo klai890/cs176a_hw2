@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h> 
 
+// Print error message and exit
 void error(const char *msg)
 {
     perror(msg);
@@ -32,8 +33,8 @@ int main(int argc, char *argv[])
         error("ERROR opening socket");
     }
 
+    // Socket setup
     server = gethostbyname(argv[1]);
-
     if (server == NULL) {
         fprintf(stderr,"ERROR, no such host\n");
         exit(0);
@@ -49,6 +50,7 @@ int main(int argc, char *argv[])
         error("ERROR connecting");
     }
 
+    // Retrieve input & send to server
     printf("Enter string: ");
     memset(buffer, 0, sizeof(buffer));
     fgets(buffer, sizeof(buffer), stdin);
@@ -56,7 +58,7 @@ int main(int argc, char *argv[])
     if (n < 0) 
          error("ERROR writing to socket");
 
-    // Read in from buffer while its not empty
+    // Read in from buffer
     memset(buffer, 0, sizeof(buffer));
     n = recv(sockfd, buffer, sizeof(buffer), 0);
     if (n > 0) {
