@@ -70,21 +70,26 @@ int main(int argc, char *argv[]) {
         buffer[bytes_received] = '\0';
         buffer[strcspn(buffer, "\r\n")] = '\0';
 
-        char* cannot_compute = "From server: Sorry, cannot compute!\n";
         if (!is_all_numbers(buffer)) {
-            sendto(server_fd, cannot_compute, strlen(cannot_compute), 0, (struct sockaddr *)&client_addr, client_len);
+            memset(buffer, 0, sizeof(buffer));
+            sprintf(buffer, "%s", "Sorry, cannot compute!\n");
+            sendto(server_fd, buffer, strlen(buffer), 0, (struct sockaddr *)&client_addr, client_len);
         }
         else {
             int sum = 0;
+            buffer[bytes_received] = '\0';
+            buffer[strcspn(buffer, "\r\n")] = '\0';
+            char result[1024] = "";
             do {
                 sum = get_sum(buffer);
+                char temp[32];
+                sprintf(temp, "%d\n", sum);
+                strcat(result, temp);
                 sprintf(buffer, "%d", sum);
-                char send_msg[128];
-                sprintf(send_msg, "From server: %d\n", sum);
-                printf("Sent %d", sum);
-                sendto(server_fd, send_msg, strlen(send_msg), 0,
-                       (struct sockaddr *)&client_addr, client_len);
             } while (sum >= 10);
+
+            sendto(server_fd, result, strlen(result), 0,
+                   (struct sockaddr *)&client_addr, client_len);
         }
     }
 

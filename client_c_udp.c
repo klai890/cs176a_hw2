@@ -56,9 +56,17 @@ int main(int argc, char *argv[])
 
     // Read in from buffer
     memset(buffer, 0, sizeof(buffer));
-    n = recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &serv_addr, &serv_len);
-    if (n > 0){
-        printf("%s", buffer);
+    n = recvfrom(sockfd, buffer, 127, 0, (struct sockaddr *) &serv_addr, &serv_len);
+    if (n > 0) {
+        printf("From server: ");
+        for (int i = 0; i < n; i++) {
+            if (buffer[i] == '\n' && i != n - 1) {
+                printf("\nFrom server: ");
+            }
+            else {
+                printf("%c", buffer[i]);
+            }
+        }
     }
 
     close(sockfd);
