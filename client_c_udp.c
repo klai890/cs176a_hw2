@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     struct hostent *server;
     socklen_t serv_len;
 
-    char buffer[128];
+    char buffer[129];
     if (argc < 3) {
        fprintf(stderr,"Usage %s hostname port\n", argv[0]);
        exit(0);
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     printf("Enter string: ");
     memset(buffer, 0, sizeof(buffer));
-    fgets(buffer, 127, stdin);
+    fgets(buffer, sizeof(buffer), stdin);
     n = sendto(sockfd, buffer, strlen(buffer), 0, (struct sockaddr *) &serv_addr, serv_len);
     if (n < 0) {
         error("ERROR writing to socket");
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
     // Read in from buffer
     memset(buffer, 0, sizeof(buffer));
-    n = recvfrom(sockfd, buffer, 127, 0, (struct sockaddr *) &serv_addr, &serv_len);
+    n = recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &serv_addr, &serv_len);
     if (n > 0) {
         printf("From server: ");
         for (int i = 0; i < n; i++) {

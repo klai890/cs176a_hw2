@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     int server_fd;
     struct sockaddr_in server_addr, client_addr;
     socklen_t client_len = sizeof(client_addr);
-    char buffer[128];
+    char buffer[129];
 
     server_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (server_fd < 0) 
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     client_len = sizeof(client_addr);
     
     while (1) {
-        ssize_t bytes_received = recvfrom(server_fd, buffer, 127, 0, (struct sockaddr *)&client_addr, &client_len);
+        ssize_t bytes_received = recvfrom(server_fd, buffer, sizeof(buffer), 0, (struct sockaddr *)&client_addr, &client_len);
         if (bytes_received <= 0) {
             continue; 
         }
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
             int sum = 0;
             buffer[bytes_received] = '\0';
             buffer[strcspn(buffer, "\r\n")] = '\0';
-            char result[1024] = "";
+            char result[129] = "";
             do {
                 sum = get_sum(buffer);
                 char temp[32];
