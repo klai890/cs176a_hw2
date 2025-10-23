@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     struct sockaddr_in serv_addr;
     struct hostent *server;
 
-    char buffer[128];
+    char buffer[129];
     if (argc < 3) {
        fprintf(stderr,"Usage %s hostname port\n", argv[0]);
        exit(0);
@@ -51,15 +51,25 @@ int main(int argc, char *argv[])
 
     printf("Enter string: ");
     memset(buffer, 0, sizeof(buffer));
-    fgets(buffer, 127, stdin);
+    fgets(buffer, sizeof(buffer), stdin);
     n = send(sockfd, buffer, strlen(buffer), 0);
     if (n < 0) 
          error("ERROR writing to socket");
 
     // Read in from buffer while its not empty
     memset(buffer, 0, sizeof(buffer));
-    while ((n = recv(sockfd, buffer, sizeof(buffer), 0)) > 0) {
-        printf("%s", buffer);
+    n = recv(sockfd, buffer, sizeof(buffer), 0);
+    if (n > 0) {
+        printf("From server: ");
+        for (int i = 0; i < n; i++) {
+            if (buffer[i] == '\n' && i != n - 1) {
+                printf("\nFrom server: ");
+            }
+            else {
+                printf("%c", buffer[i]);
+            }
+        }
+
     }
 
     close(sockfd);

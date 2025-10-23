@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     int server_fd, client_fd;
     struct sockaddr_in server_addr, client_addr;
     socklen_t client_len = sizeof(client_addr);
-    char buffer[128];
+    char buffer[129];
 
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) 
@@ -71,26 +71,32 @@ int main(int argc, char *argv[]) {
             continue; 
         }
 
-        ssize_t bytes_received = recv(client_fd, buffer, 127, 0);
+        ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer), 0);
         if (bytes_received <= 0) {
             close(client_fd);
             continue; 
         }
         buffer[bytes_received] = '\0';
         buffer[strcspn(buffer, "\r\n")] = '\0';
-        char* cannot_compute = "Fron server: Sorry, cannot compute!\n";
         if (!is_all_numbers(buffer)) {
-            send(client_fd, cannot_compute, strlen(cannot_compute), 0);
+            memset(buffer, 0, sizeof(buffer));
+            sprintf(buffer, "%s", "Sorry, cannot compute!\n");
+            send(client_fd, buffer, strlen(buffer), 0);
         }
         else {
             int sum = 0;
+            buffer[bytes_received] = '\0';
+            buffer[strcspn(buffer, "\r\n")] = '\0';
+            char result[129] = "";
             do {
                 sum = get_sum(buffer);
+                char temp[32];
+                sprintf(temp, "%d\n", sum);
+                strcat(result, temp);
                 sprintf(buffer, "%d", sum);
-                char send_msg[128];
-                sprintf(send_msg, "From server: %d\n", sum);
-                send(client_fd, send_msg, strlen(send_msg), 0);
             } while (sum >= 10);
+            
+            send(client_fd, result, strlen(result), 0);
         }
 
         close(client_fd); 
